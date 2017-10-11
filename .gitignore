@@ -1,0 +1,4 @@
+notes.txt
+dataset_raw/*
+cocoamodel/__pycache__/*
+__pycache__/*
