@@ -27,7 +27,7 @@ def get_itens_descr():
     """Create a description of your dictionary itens."""
     return {
     'image': 'A 3-channel RGB plants image that contain cocoa pods or not.',
-    'label': 'A label that is as such -- 0:cocoa, 1:others'
+    'label': 'Binary label stating 0:cocoa, 1:others'
     }
 
 

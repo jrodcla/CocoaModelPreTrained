@@ -27,7 +27,7 @@ MIN_FRACTION_QUEUE = 0.4  # Minimum fraction of examples in the queue.
 QUEUE_MIN          = BATCH_SIZE
 QUEUE_CAPAC        = 4 * BATCH_SIZE
 
-EPOCHS_BEFORE_DECAY = 3 # Number of epochs before decaying the learning rate.
+EPOCHS_BEFORE_DECAY = 2 # Number of epochs before decaying the learning rate.
 #DECAY_STEPS         = int((EXAMPLES_PER_EPOCH / BATCH_SIZE) * EPOCHS_BEFORE_DECAY)
 INITIAL_LEARN_RATE  = 0.0001 #  Initial learning rate.
 LEARN_DECAY_FACTOR  = 0.65 #  Learning rate decay factor.
