@@ -14,10 +14,14 @@ def current_time():
 
 def gen_dir_name(base_name):
     dir_name = base_name + '-' + current_time()
-    if tf.gfile.Exists(dir_name):
-        tf.gfile.DeleteRecursively(dir_name)
-    tf.gfile.MakeDirs(dir_name)
-    base_name = dir_name
+    try:
+        if tf.gfile.Exists(dir_name):
+            tf.gfile.DeleteRecursively(dir_name)
+        tf.gfile.MakeDirs(dir_name)
+    except Exception as e:
+        raise e
+    else:
+        return dir_name
 
 def config_logging():
     ##TODO Check if I'm still using this dir at all

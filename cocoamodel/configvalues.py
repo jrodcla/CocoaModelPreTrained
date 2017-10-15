@@ -2,7 +2,7 @@
 ##TODO Document usage of all these constants.
 
 ##################### Basic Configuration
-CHECKPOINT_FILE = './inception_resnet_v2_2016_08_30.ckpt'
+CHECKPOINT_FILE = './inception/inception_resnet_v2_2016_08_30.ckpt'
 DATASET_NAME    = 'plants'
 DATASET_DIR     = './dataset'
 TRAIN_DIR       = './train_runs/train'

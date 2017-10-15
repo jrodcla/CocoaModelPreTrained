@@ -1,6 +1,6 @@
 import os
 import tensorflow as tf
-import inception_preprocessing as inception
+import inception.inception_preprocessing as inception
 
 # Custom imports
 from cocoamodel.configvalues import *
