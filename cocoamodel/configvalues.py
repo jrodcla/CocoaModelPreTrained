@@ -16,7 +16,7 @@ NUM_THREADS = 4
 
 ##################### Training information
 
-NUM_EPOCHS = 6 # the number of epochs to train
+NUM_EPOCHS = 10 # the number of epochs to train
 BATCH_SIZE = 10
 
 EXAMPLES_PER_EVAL = 500
@@ -27,10 +27,10 @@ MIN_FRACTION_QUEUE = 0.4  # Minimum fraction of examples in the queue.
 QUEUE_MIN          = BATCH_SIZE
 QUEUE_CAPAC        = 4 * BATCH_SIZE
 
-EPOCHS_BEFORE_DECAY = 2 # Number of epochs before decaying the learning rate.
+EPOCHS_BEFORE_DECAY = 5 # Number of epochs before decaying the learning rate.
 #DECAY_STEPS         = int((EXAMPLES_PER_EPOCH / BATCH_SIZE) * EPOCHS_BEFORE_DECAY)
-INITIAL_LEARN_RATE  = 0.0001 #  Initial learning rate.
-LEARN_DECAY_FACTOR  = 0.65 #  Learning rate decay factor.
+INITIAL_LEARN_RATE  = 0.0007 #  Initial learning rate.
+LEARN_DECAY_FACTOR  = 0.50 #  Learning rate decay factor.
 MOVING_AVG_DECAY    = 0.999 # Decay for the moving average.
 
 MAX_STEPS = 10000

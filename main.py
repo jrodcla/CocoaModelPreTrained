@@ -1,3 +1,4 @@
+#!/usr/bin/python3.5
 import argparse
 from datetime import datetime
 import time
@@ -17,7 +18,7 @@ def cocoa_or_not(filename):
         print('\n\n\nI am %.2f percent sure that this is a cocoa pod.\n\n\n' % (float(x[0])*100))
     else:
         print('\n\n\nI don\'t think there is cocoa in this photo. %.2f \n\n\n' % (float(x[1])*100))
-    #print(repr(x))
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -28,6 +29,8 @@ def main():
                     help='Eval mode on.')
     parser.add_argument('--is_cocoa', type=str,
                     help='Is there a cocoa in this image?')
+    parser.add_argument('--check_dir', type=str,
+                    help='Directory where to take the checkpoint from.')
 
     args = parser.parse_args()
 
@@ -42,6 +45,12 @@ def main():
         exit()
 
     if args.is_cocoa:
+        if args.check_dir:
+            try:
+                cv.CHECKPOINT_FILE = tf.train.latest_checkpoint(args.check_dir)
+            except:
+                logging.info("Checkpoint not found. Check the directory provided.")
+                exit()
         cocoa_or_not(args.is_cocoa)
         exit()
 

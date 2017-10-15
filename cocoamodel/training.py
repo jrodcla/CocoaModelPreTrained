@@ -91,6 +91,8 @@ def trainmode():
                     metrics_obj.log_step_loss(total_loss, global_step_count)
 
                 if step % cv.BATCHES_PER_EPOCH == 0:
+                    metrics_obj.log_step_loss(total_loss, global_step_count)
+                    metrics_obj.log_metrics(sess)
                     supervisor.saver.save(sess,
                                           supervisor.save_path,
                                           global_step = supervisor.global_step)
@@ -98,7 +100,7 @@ def trainmode():
             total_loss, global_step_count, _ = sess.run([train_op,
                                                          global_step,
                                                          metrics_op])
-            logging.info('Loss: %s', total_loss)
+            metrics_obj.log_step_loss(total_loss, global_step_count)
             metrics_obj.log_metrics(sess)
 
             supervisor.saver.save(sess,

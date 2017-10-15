@@ -70,10 +70,6 @@ def convert_image(filename):
     img = tf.read_file(filename)
     image_data = tf.convert_to_tensor(img)
     image_data = tf.image.decode_jpeg(image_data, channels=3)
-    #image_data = inception.preprocess_image(image_data,
-                                                #cv.IMG_HEIGHT,
-                                                #cv.IMG_WIDTH,
-                                                #False)
     image_data = tf.expand_dims(image_data, 0)
     image_data = tf.image.convert_image_dtype(image_data, dtype=tf.float32)
     image_data = tf.image.resize_nearest_neighbor(image_data, 
@@ -86,7 +82,6 @@ def convert_image(filename):
 
 def test_image(filename):
     image_tensor = convert_image(filename)
-    cv.CHECKPOINT_FILE = tf.train.latest_checkpoint('./log')
     sess = tf.InteractiveSession()
     graph = tf.Graph()
     graph.as_default()
@@ -99,5 +94,4 @@ def test_image(filename):
                 slim.get_model_variables('InceptionResnetV2'))
         init_fn(sess)
         np_image, probabilities = sess.run([image_tensor, probabilities])
-        probabilities = probabilities[0, 0:]
-        return probabilities
+        return probabilities[0, 0:]

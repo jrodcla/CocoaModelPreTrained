@@ -105,9 +105,6 @@ def _load_batch(raw_image, raw_label, batch_size=BATCH_SIZE, shuffle=True):
                                         num_threads=NUM_THREADS,
                                         capacity=QUEUE_CAPAC)
 
-    # Display the training images in the visualizer.
-    tf.summary.image('images', images)
-
     return images, tf.reshape(labels, [batch_size])
 
 def get_batch_input(dt_type=TRAIN, no_pre_process=False):
