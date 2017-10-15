@@ -29,11 +29,13 @@ QUEUE_CAPAC        = 4 * BATCH_SIZE
 
 EPOCHS_BEFORE_DECAY = 5 # Number of epochs before decaying the learning rate.
 #DECAY_STEPS         = int((EXAMPLES_PER_EPOCH / BATCH_SIZE) * EPOCHS_BEFORE_DECAY)
-INITIAL_LEARN_RATE  = 0.0007 #  Initial learning rate.
+INITIAL_LEARN_RATE  = 0.001 #  Initial learning rate.
 LEARN_DECAY_FACTOR  = 0.50 #  Learning rate decay factor.
 MOVING_AVG_DECAY    = 0.999 # Decay for the moving average.
 
 MAX_STEPS = 10000
+
+TRAIN_DEPTH = 3
 
 ##################### Layers
 

@@ -79,14 +79,14 @@ class Metrics:
         return self.summary_op
 
     def log_metrics(self, sess):
-        logging.info('Accuracy  : %.3f', sess.run(self.accuracy))
-        logging.info('Precision : %.3f', sess.run(self.precision))
-        logging.info('Recall    : %.3f', sess.run(self.recall))
-        logging.info('True Pos  : %.3f', sess.run(self.tpos))
-        logging.info('False Pos : %.3f', sess.run(self.fpos))
-        logging.info('True Neg  : %.3f', sess.run(self.tneg))
-        logging.info('False Neg : %.3f', sess.run(self.fneg))
-        logging.info('MCC       : %.3f', sess.run(self.mcc))
+        logging.info('Accuracy  : %.4f', sess.run(self.accuracy))
+        logging.info('Precision : %.4f', sess.run(self.precision))
+        logging.info('Recall    : %.4f', sess.run(self.recall))
+        logging.info('True Pos  : %.1f', sess.run(self.tpos))
+        logging.info('False Pos : %.1f', sess.run(self.fpos))
+        logging.info('True Neg  : %.1f', sess.run(self.tneg))
+        logging.info('False Neg : %.1f', sess.run(self.fneg))
+        logging.info('MCC       : %.4f', sess.run(self.mcc))
 
     def log_step_accuracy(self, sess, step):
         value = sess.run(self.accuracy)

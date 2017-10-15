@@ -8,12 +8,29 @@ from inception.inception_resnet_v2 import inception_resnet_v2, inception_resnet_
 
 slim = tf.contrib.slim
 
+    
+def get_vars_to_train_per_depth(depth):
+    model_name = 'InceptionResnetV2/'
+    # depth = 0 means train all layers.
+    # depth = 1 means train only Logits layers.
+    # depth = 2 means train Logits and Conv2d_7b_1x1. And so on.
+    names = ['Logits', 'Conv2d_7b_1x1', 'Block8', 'Repeat_2', 'Mixed_7a',
+             'Repeat_1', 'Mixed_6a', 'Repeat', 'Mixed_5b', 'Conv2d_4a_3x3',
+             'Conv2d_3b_1x1', 'Conv2d_2b_3x3', 'Conv2d_2a_3x3', 'Conv2d_1a_3x3']
+    selected = names[0:depth]
+    vars_to_train =[]
+    for i in tf.trainable_variables():
+        for layer in selected:
+            if i.name.startswith(model_name + layer):
+                vars_to_train.append(i)
+    return vars_to_train
+
 def trainmode():
     dir_name = utils.gen_dir_name(cv.TRAIN_DIR)
     print(dir_name)
     # Saves the configvalues.py file so we can keep track of all the
     # configuration values that were used.
-    # TODO proper export all these configurations.
+    # TODO properly export all these configurations.
     shutil.copy('./cocoamodel/configvalues.py', dir_name)
 
     with tf.Graph().as_default() as graph:
@@ -56,11 +73,7 @@ def trainmode():
         
         # Since we do not want to touch the lower layers' weights of this
         # inception model, here we select which variables to train.
-        vars_to_train =[]
-        for i in tf.trainable_variables():
-            if i.name.startswith('InceptionResnetV2/Conv2d_7b_1x1/') \
-            or i.name.startswith('InceptionResnetV2/Logits/Logits/'):
-                vars_to_train.append(i)
+        vars_to_train = get_vars_to_train_per_depth(cv.TRAIN_DEPTH)
 
         train_op = slim.learning.create_train_op(total_loss,
                                                  optimizer,
