@@ -9,9 +9,9 @@ import inception.inception_preprocessing as inception
 slim = tf.contrib.slim
 
 def evalmode(chkpt_dir):
-    dir_name = utils.gen_dir_name(cv.EVAL_DIR)
     try:
         cv.CHECKPOINT_FILE = tf.train.latest_checkpoint(chkpt_dir)
+        dir_name = utils.gen_dir_name(chkpt_dir + '/eval')
     except:
         logging.info("Checkpoint not found. Check the directory provided.")
         exit()

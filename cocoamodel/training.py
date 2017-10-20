@@ -45,7 +45,8 @@ def trainmode():
         with slim.arg_scope(inception_resnet_v2_arg_scope()):
             logits, end_points = inception_resnet_v2(images,
                                                      num_classes = cv.CLASSES,
-                                                     is_training = True)
+                                                     is_training = True,
+                                                     dropout_keep_prob = cv.KEEP_PROB)
 
         #  We are not training the original ImageNet which the checkpoint was
         # trained to, so we should exclude the Logits scopes, since the number
@@ -104,7 +105,6 @@ def trainmode():
                     metrics_obj.log_step_loss(total_loss, global_step_count)
 
                 if step % cv.BATCHES_PER_EPOCH == 0:
-                    metrics_obj.log_step_loss(total_loss, global_step_count)
                     metrics_obj.log_metrics(sess)
                     supervisor.saver.save(sess,
                                           supervisor.save_path,
