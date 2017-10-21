@@ -72,13 +72,18 @@ def trainmode():
 
         optimizer = tf.train.AdamOptimizer(learning_rate = learn_rate)
         
-        # Since we do not want to touch the lower layers' weights of this
-        # inception model, here we select which variables to train.
-        vars_to_train = get_vars_to_train_per_depth(cv.TRAIN_DEPTH)
+        # train all layers.
+        if cv.TRAIN_DEPTH == 0:
+            train_op = slim.learning.create_train_op(total_loss,
+                                                 optimizer)
+        else:
+            # Since we do not want to touch the lower layers' weights of this
+            # inception model, here we select which variables to train.
+            vars_to_train = get_vars_to_train_per_depth(cv.TRAIN_DEPTH)
 
-        train_op = slim.learning.create_train_op(total_loss,
-                                                 optimizer,
-                                                 variables_to_train=vars_to_train)
+            train_op = slim.learning.create_train_op(total_loss,
+                                                    optimizer,
+                                                    variables_to_train=vars_to_train)
 
         # Set up the metrics.
         tf.summary.scalar('losses/Total_Loss', total_loss)
@@ -105,6 +110,7 @@ def trainmode():
                     metrics_obj.log_step_loss(total_loss, global_step_count)
 
                 if step % cv.BATCHES_PER_EPOCH == 0:
+                    logging.info('Epoch  : %d', int(step / cv.BATCHES_PER_EPOCH))
                     metrics_obj.log_metrics(sess)
                     supervisor.saver.save(sess,
                                           supervisor.save_path,
