@@ -12,12 +12,11 @@ from cocoamodel import gendataset, configvalues, utils, process, training, evalu
 slim = tf.contrib.slim
 
 def cocoa_or_not(filename):
-    #filename = '/home/july/CocoaModel/dataset_raw/images/image_jpg/img9.jpg'
     x = evaluate.test_image(filename)
     if x[0] > x[1]:
-        print('\n\n\nI am %.2f percent sure that this is a cocoa pod.\n\n\n' % (float(x[0])*100))
+        print('\n\n\nPresence of Cocoa: %.2f \n\n\n' % (float(x[0])*100))
     else:
-        print('\n\n\nI don\'t think there is cocoa in this photo. %.2f \n\n\n' % (float(x[1])*100))
+        print('\n\n\nAbsence of Cocoa: %.2f \n\n\n' % (float(x[1])*100))
 
 
 def main():

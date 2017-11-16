@@ -87,7 +87,7 @@ def from_tfrecord(dt_type=TRAIN):
                                    num_classes = CLASSES,
                                    labels_to_name = get_label_dict(),
                                    items_to_descriptions = get_itens_descr())
-
+    print(repr(dataset.num_samples))
     return dataset
 
 def _load_batch(raw_image, raw_label, batch_size=BATCH_SIZE, shuffle=True):
