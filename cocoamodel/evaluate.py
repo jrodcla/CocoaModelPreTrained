@@ -8,11 +8,12 @@ from inception.inception_resnet_v2 import inception_resnet_v2, inception_resnet_
 import inception.inception_preprocessing as inception
 slim = tf.contrib.slim
 
+
 def evalmode(chkpt_dir):
     try:
         cv.CHECKPOINT_FILE = tf.train.latest_checkpoint(chkpt_dir)
         dir_name = utils.gen_dir_name(chkpt_dir + '/eval')
-    except:
+    except BaseException:
         logging.info("Checkpoint not found. Check the directory provided.")
         exit()
 
@@ -30,12 +31,13 @@ def evalmode(chkpt_dir):
 
         with slim.arg_scope(inception_resnet_v2_arg_scope()):
             logits, end_points = inception_resnet_v2(images,
-                                                     num_classes = cv.CLASSES,
-                                                     is_training = False)
+                                                     num_classes=cv.CLASSES,
+                                                     is_training=False)
 
         # Here we restore all the variables.
         variables_to_restore = slim.get_variables_to_restore()
         saver = tf.train.Saver(variables_to_restore)
+
         def restore_fn(sess):
             return saver.restore(sess, cv.CHECKPOINT_FILE)
 
@@ -45,10 +47,10 @@ def evalmode(chkpt_dir):
         # Set up the metrics.
         metrics_obj = process.Metrics(end_points['Predictions'], labels)
 
-        supervisor = tf.train.Supervisor(logdir = dir_name,
-                                         summary_op = None,
-                                         saver = None,
-                                         init_fn = restore_fn)
+        supervisor = tf.train.Supervisor(logdir=dir_name,
+                                         summary_op=None,
+                                         saver=None,
+                                         init_fn=restore_fn)
 
         with supervisor.managed_session() as sess:
             # We do the last step out of this for loop.
@@ -64,17 +66,17 @@ def evalmode(chkpt_dir):
             sess.run([global_step_op, metrics_op])
 
             metrics_obj.log_metrics(sess)
-            
-            
+
+
 def convert_image(filename):
     img = tf.read_file(filename)
     image_data = tf.convert_to_tensor(img)
     image_data = tf.image.decode_jpeg(image_data, channels=3)
     image_data = tf.expand_dims(image_data, 0)
     image_data = tf.image.convert_image_dtype(image_data, dtype=tf.float32)
-    image_data = tf.image.resize_nearest_neighbor(image_data, 
-                                                    [cv.IMG_HEIGHT,
-                                                    cv.IMG_WIDTH])
+    image_data = tf.image.resize_nearest_neighbor(image_data,
+                                                  [cv.IMG_HEIGHT,
+                                                   cv.IMG_WIDTH])
     image_data = tf.squeeze(image_data)
     image_data = tf.expand_dims(image_data, 0)
     return image_data
@@ -87,11 +89,13 @@ def test_image(filename):
     graph.as_default()
 
     with slim.arg_scope(inception_resnet_v2_arg_scope()):
-        logits, _ = inception_resnet_v2(image_tensor, num_classes=2, is_training=False)
+        logits, _ = inception_resnet_v2(image_tensor,
+                                        num_classes=2,
+                                        is_training=False)
         probabilities = tf.nn.softmax(logits)
         init_fn = slim.assign_from_checkpoint_fn(
-                cv.CHECKPOINT_FILE,
-                slim.get_model_variables('InceptionResnetV2'))
+            cv.CHECKPOINT_FILE,
+            slim.get_model_variables('InceptionResnetV2'))
         init_fn(sess)
         np_image, probabilities = sess.run([image_tensor, probabilities])
         return probabilities[0, 0:]

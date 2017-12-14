@@ -7,8 +7,6 @@ from cocoamodel.configvalues import *
 
 slim = tf.contrib.slim
 
-##################### Dictionaries for the dataset
-
 
 def get_label_dict():
     """Creates a dictiorary relating each label to their string name."""
@@ -18,7 +16,7 @@ def get_label_dict():
     with open(labels_file, 'r') as labels:
         for line in labels:
             label, string_name = line.split(':')
-            string_name = string_name[:-1] #Remove newline
+            string_name = string_name[:-1]  # Remove newline
             labels_to_name[int(label)] = string_name
     return labels_to_name
 
@@ -26,12 +24,9 @@ def get_label_dict():
 def get_itens_descr():
     """Create a description of your dictionary itens."""
     return {
-    'image': 'A 3-channel RGB plants image that contain cocoa pods or not.',
-    'label': 'Binary label stating 0:cocoa, 1:others'
-    }
+        'image': 'A 3-channel RGB plants image that contain cocoa pods or not.',
+        'label': 'Binary label stating 0:cocoa, 1:others'}
 
-
-##################### Dictionaries for the decoder
 
 def get_keys_to_features():
     return {'image/encoded': tf.FixedLenFeature((),
@@ -44,14 +39,14 @@ def get_keys_to_features():
                                                     tf.int64,
                                                     default_value=tf.zeros(
                                                         [], dtype=tf.int64))
-           }
+            }
+
 
 def get_itens_to_handlers():
     return {'image': slim.tfexample_decoder.Image(),
             'label': slim.tfexample_decoder.Tensor('image/class/label')
-           }
+            }
 
-##################### Useful functions
 
 def count_samples(dt_type=TRAIN):
     """Return total of samples found in files from pattern."""
@@ -64,13 +59,15 @@ def count_samples(dt_type=TRAIN):
                 num_samples += 1
     return num_samples
 
+
 def from_tfrecord(dt_type=TRAIN):
     """Prepare dataset to be used in the network.
 
     Generate dataset object with all its attributes from a tfrecord file.
 
-    Params: TODO
-    Returns: TODO
+    Params: string containing the data type that will be matched with the files
+    names.
+    Returns: dataset object.
     """
     path_pattern = os.path.join(DATASET_DIR,
                                 DATASET_NAME + '_' + dt_type + '_*.tfrecord')
@@ -79,18 +76,30 @@ def from_tfrecord(dt_type=TRAIN):
     decoder = slim.tfexample_decoder.TFExampleDecoder(get_keys_to_features(),
                                                       get_itens_to_handlers())
 
-    dataset = slim.dataset.Dataset(data_sources = path_pattern,
-                                   decoder = decoder,
-                                   reader = reader,
-                                   num_readers = NUM_READERS,
-                                   num_samples = count_samples(dt_type),
-                                   num_classes = CLASSES,
-                                   labels_to_name = get_label_dict(),
-                                   items_to_descriptions = get_itens_descr())
+    dataset = slim.dataset.Dataset(data_sources=path_pattern,
+                                   decoder=decoder,
+                                   reader=reader,
+                                   num_readers=NUM_READERS,
+                                   num_samples=count_samples(dt_type),
+                                   num_classes=CLASSES,
+                                   labels_to_name=get_label_dict(),
+                                   items_to_descriptions=get_itens_descr())
     print(repr(dataset.num_samples))
     return dataset
 
+
 def _load_batch(raw_image, raw_label, batch_size=BATCH_SIZE, shuffle=True):
+    """Set up batch tensors for images and labels.
+
+    Params:
+        raw_image: images tensor from the database.
+        raw_label: labels tensor from the database.
+        batch_size: size of batch.
+        shuffle: boolean True if batch should be shuffled, false otherwise.
+    Returns:
+        images: batched image tensor.
+        labels: batched labels tensor.
+    """
     # Batches could use the flag allow_smaller_final_batch, but then operations
     # requiring fixed batch size would fail.
     if shuffle:
@@ -107,26 +116,23 @@ def _load_batch(raw_image, raw_label, batch_size=BATCH_SIZE, shuffle=True):
 
     return images, tf.reshape(labels, [batch_size])
 
+
 def get_batch_input(dt_type=TRAIN, no_pre_process=False):
-    ##TODO decrease examples per epoch in eval mode.
 
     input_dataset = from_tfrecord(dt_type)
 
     data_provider = slim.dataset_data_provider.DatasetDataProvider(
         input_dataset,
-        common_queue_capacity = QUEUE_CAPAC,
-        common_queue_min = QUEUE_MIN)
+        common_queue_capacity=QUEUE_CAPAC,
+        common_queue_min=QUEUE_MIN)
 
     image_data, label_data = data_provider.get(['image', 'label'])
 
-    #TODO Do I save some memory casting to int32?
-    #label_processed = tf.cast(label_data, tf.int32)
-
     if (no_pre_process):
         image_data = tf.expand_dims(image_data, 0)
-        image_data = tf.image.resize_nearest_neighbor(image_data, 
+        image_data = tf.image.resize_nearest_neighbor(image_data,
                                                       [IMG_HEIGHT,
-                                                      IMG_WIDTH])
+                                                       IMG_WIDTH])
         image_data = tf.squeeze(image_data)
     else:
         image_data = inception.preprocess_image(image_data,

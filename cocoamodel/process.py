@@ -7,6 +7,7 @@ import time
 
 import cocoamodel.configvalues as cv
 
+
 def calc_steps_details(total_examples):
     cv.EXAMPLES_PER_EPOCH = total_examples
     cv.BATCHES_PER_EPOCH = int(cv.EXAMPLES_PER_EPOCH / cv.BATCH_SIZE)
@@ -30,29 +31,30 @@ class Metrics:
         self.recall, recall_update = \
             tf.contrib.metrics.streaming_recall(self.pred, self.labels)
 
-        self.fneg, fneg_update = \
-            tf.contrib.metrics.streaming_false_negatives(self.pred, self.labels)
-        self.fpos, fpos_update = \
-            tf.contrib.metrics.streaming_false_positives(self.pred, self.labels)
+        self.fneg, fneg_update = tf.contrib.metrics.streaming_false_negatives(
+            self.pred, self.labels)
+        self.fpos, fpos_update = tf.contrib.metrics.streaming_false_positives(
+            self.pred, self.labels)
         self.tneg, tneg_update = \
             tf.contrib.metrics.streaming_true_negatives(self.pred, self.labels)
         self.tpos, tpos_update = \
             tf.contrib.metrics.streaming_true_positives(self.pred, self.labels)
 
         self.mcc = tf.Variable(tf.zeros([]), name='mcc')
-        mcc_update = tf.assign(self.mcc,
-                               tf.divide(
-                                   tf.subtract(
-                                       tf.multiply(self.tpos, self.tneg),
-                                       tf.multiply(self.fpos, self.fneg)),
-                                   tf.sqrt(
-                                       tf.multiply(
-                                           tf.multiply(
-                                               tf.add(self.tpos, self.fpos),
-                                               tf.add(self.tpos, self.fneg)),
-                                           tf.multiply(
-                                               tf.add(self.tneg, self.fpos),
-                                               tf.add(self.tneg, self.fneg))))))
+        mcc_update = tf.assign(
+            self.mcc, tf.divide(
+                tf.subtract(
+                    tf.multiply(
+                        self.tpos, self.tneg), tf.multiply(
+                        self.fpos, self.fneg)), tf.sqrt(
+                    tf.multiply(
+                        tf.multiply(
+                            tf.add(
+                                self.tpos, self.fpos), tf.add(
+                                self.tpos, self.fneg)), tf.multiply(
+                            tf.add(
+                                self.tneg, self.fpos), tf.add(
+                                self.tneg, self.fneg))))))
 
         self.metrics_op = tf.group(accuracy_update,
                                    precision_update,
@@ -94,19 +96,18 @@ class Metrics:
 
     def log_step_loss(self, value, step):
         self.log_step_x('Loss', value, step)
-        
+
     def log_step_x(self, name, value, step):
         time_elapsed = time.time() - self.start_time
         logging.info('%s - %s/%s - %s: %.4f - %.2f sec/step',
-                                datetime.now(),
-                                step,
-                                cv.TOTAL_STEPS,
-                                name,
-                                value,
-                                time_elapsed/cv.LOG_FREQ)
+                     datetime.now(),
+                     step,
+                     cv.TOTAL_STEPS,
+                     name,
+                     value,
+                     time_elapsed / cv.LOG_FREQ)
         self.start_time = time.time()
-        
-        
+
     def prepare_run(self):
         self.start_time = time.time()
         return self.metrics_op, self.summary_op

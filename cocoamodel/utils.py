@@ -4,13 +4,21 @@ import tensorflow as tf
 
 from cocoamodel.configvalues import *
 
+
 def current_time():
+    """Generate a string containing the current time.
+
+    Useful for dir names or file names.
+
+    Returns: string in format year-month-day-hour-minute
+    """
     now = datetime.now()
-    if now.day in (1,9):
+    if now.day in (1, 9):
         pattern = '%s-%s-0%s-%s-%s'
     else:
         pattern = '%s-%s-%s-%s-%s'
     return pattern % (now.year, now.month, now.day, now.hour, now.minute)
+
 
 def gen_dir_name(base_name):
     dir_name = base_name + '-' + current_time()
@@ -23,8 +31,8 @@ def gen_dir_name(base_name):
     else:
         return dir_name
 
+
 def config_logging():
-    ##TODO Check if I'm still using this dir at all
     if not os.path.exists(LOG_DIR):
         os.mkdir(LOG_DIR)
     tf.logging.set_verbosity(tf.logging.INFO)
