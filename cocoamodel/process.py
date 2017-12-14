@@ -31,6 +31,16 @@ class Metrics:
         self.recall, recall_update = \
             tf.contrib.metrics.streaming_recall(self.pred, self.labels)
 
+        if cv.CLASSES > 2:
+            # mcc, fneg, fpos, tneg and tpos are more interesting and generate
+            # very good visualization when dealing with binary classification,
+            # not as much otherwise. So we ignore them in this Metrics class.
+            self.metrics_op = tf.group(accuracy_update,
+                                       precision_update,
+                                       self.prob,
+                                       recall_update)
+            return self.metrics_op
+
         self.fneg, fneg_update = tf.contrib.metrics.streaming_false_negatives(
             self.pred, self.labels)
         self.fpos, fpos_update = tf.contrib.metrics.streaming_false_positives(
@@ -72,11 +82,12 @@ class Metrics:
         tf.summary.scalar('Accuracy', self.accuracy)
         tf.summary.scalar('Precision', self.precision)
         tf.summary.scalar('Recall', self.recall)
-        tf.summary.scalar('True_Pos', self.tpos)
-        tf.summary.scalar('False_Pos', self.fpos)
-        tf.summary.scalar('True_Neg', self.tneg)
-        tf.summary.scalar('False_Neg', self.fneg)
-        tf.summary.scalar('MCC', self.mcc)
+        if cv.CLASSES == 2:
+            tf.summary.scalar('True_Pos', self.tpos)
+            tf.summary.scalar('False_Pos', self.fpos)
+            tf.summary.scalar('True_Neg', self.tneg)
+            tf.summary.scalar('False_Neg', self.fneg)
+            tf.summary.scalar('MCC', self.mcc)
         self.summary_op = tf.summary.merge_all()
         return self.summary_op
 
@@ -84,11 +95,12 @@ class Metrics:
         logging.info('Accuracy  : %.4f', sess.run(self.accuracy))
         logging.info('Precision : %.4f', sess.run(self.precision))
         logging.info('Recall    : %.4f', sess.run(self.recall))
-        logging.info('True Pos  : %.1f', sess.run(self.tpos))
-        logging.info('False Pos : %.1f', sess.run(self.fpos))
-        logging.info('True Neg  : %.1f', sess.run(self.tneg))
-        logging.info('False Neg : %.1f', sess.run(self.fneg))
-        logging.info('MCC       : %.4f', sess.run(self.mcc))
+        if cv.CLASSES == 2:
+            logging.info('True Pos  : %.1f', sess.run(self.tpos))
+            logging.info('False Pos : %.1f', sess.run(self.fpos))
+            logging.info('True Neg  : %.1f', sess.run(self.tneg))
+            logging.info('False Neg : %.1f', sess.run(self.fneg))
+            logging.info('MCC       : %.4f', sess.run(self.mcc))
 
     def log_step_accuracy(self, sess, step):
         value = sess.run(self.accuracy)

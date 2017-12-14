@@ -23,9 +23,18 @@ def get_label_dict():
 
 def get_itens_descr():
     """Create a description of your dictionary itens."""
-    return {
-        'image': 'A 3-channel RGB plants image that contain cocoa pods or not.',
-        'label': 'Binary label stating 0:cocoa, 1:others'}
+    if CLASSES == 2:
+        return {
+            'image': 'A 3-channel RGB plants image that contain cocoa pods or not.',
+            'label': 'Binary label stating 0:cocoa, 1:others'}
+    elif CLASSES == 3:
+        return {
+            'image': 'A 3-channel RGB plants image that contain cocoa pods ripe, unripe or other plants.',
+            'label': 'Binary label stating 0:unripe, 1:others, 2:ripe'}
+    else:
+        return {
+            'image': 'A 3-channel RGB plants image that may contain cocoa pods.',
+            'label': 'Label'}
 
 
 def get_keys_to_features():
@@ -84,7 +93,7 @@ def from_tfrecord(dt_type=TRAIN):
                                    num_classes=CLASSES,
                                    labels_to_name=get_label_dict(),
                                    items_to_descriptions=get_itens_descr())
-    print(repr(dataset.num_samples))
+    print('\nDatabase size: ' + repr(dataset.num_samples) + '\n')
     return dataset
 
 

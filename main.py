@@ -13,10 +13,14 @@ slim = tf.contrib.slim
 
 def cocoa_or_not(filename):
     x = evaluate.test_image(filename)
-    if x[0] > x[1]:
-        print('\n\n\nPresence of Cocoa: %.2f \n\n\n' % (float(x[0])*100))
+    if cv.CLASSES == 2:
+        if x[0] > x[1]:
+            print('\n\n\nPresence of Cocoa: %.2f \n\n\n' % (float(x[0])*100))
+        else:
+            print('\n\n\nAbsence of Cocoa: %.2f \n\n\n' % (float(x[1])*100))
     else:
-        print('\n\n\nAbsence of Cocoa: %.2f \n\n\n' % (float(x[1])*100))
+        for i in range(0, len(x)):
+            print ('\n\n\nClass %d: %.2f \n\n\n' % (i, float(x[i])*100))
 
 
 def main():

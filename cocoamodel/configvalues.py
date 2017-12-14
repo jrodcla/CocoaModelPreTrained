@@ -1,6 +1,3 @@
-
-# TODO Document usage of all these constants.
-
 # Basic Configuration
 CHECKPOINT_FILE = './inception/inception_resnet_v2_2016_08_30.ckpt'
 DATASET_NAME = 'plants'
@@ -15,9 +12,15 @@ LOG_FREQ = 10
 NUM_THREADS = 4
 
 # Training information
-
 NUM_EPOCHS = 2500  # the number of epochs to train
-BATCH_SIZE = 20
+BATCH_SIZE = 15
+# Batch size is the bottleneck. InceptionResnetV2 is a wide and deep network,
+# so itself is already heavy for home GPUs, even more considering during
+# training higher TRAIN_DEPTH. Additionally, we have to use not so small images
+# so we don't lose too much information. To make it all fit in the memory, each
+# step has to take just a few images into consideration, in other words, small
+# batch size. As a consequence, the model has more variance and takes longer to
+# start converging.
 
 EXAMPLES_PER_EVAL = 500
 
@@ -32,7 +35,7 @@ EPOCHS_BEFORE_DECAY = 250
 INITIAL_LEARN_RATE = 0.001
 LEARN_DECAY_FACTOR = 0.40  # Learning rate decay factor.
 
-TRAIN_DEPTH = 0
+TRAIN_DEPTH = 2
 
 # For dropout
 KEEP_PROB = 0.8
@@ -42,7 +45,7 @@ IMG_WIDTH = 299
 IMG_HEIGHT = 299
 
 #  Model Classes
-CLASSES = 2
+CLASSES = 3
 NUM_READERS = 4
 
 # Indexes and strings

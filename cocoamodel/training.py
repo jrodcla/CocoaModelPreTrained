@@ -40,7 +40,6 @@ def get_vars_to_train_per_depth(depth):
 
 def trainmode():
     dir_name = utils.gen_dir_name(cv.TRAIN_DIR)
-    print(dir_name)
     # Saves the configvalues.py file so we can keep track of all the
     # configuration values that were used.
     # TODO properly export all these configurations.
